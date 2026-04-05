@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>JobHunter — Sunil Kumar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--ink:#111318;--ink2:#50555f;--ink3:#9ba0a8;--paper:#fafaf8;--surface:#f3f2ef;--line:rgba(0,0,0,.08);--line2:rgba(0,0,0,.14);--blue:#1a56db;--blue-bg:#eff4ff;--green:#057a55;--green-bg:#f0fdf4;--amber:#92400e;--amber-bg:#fffbeb;--red:#9b1c1c;--red-bg:#fef2f2;--serif:'Instrument Serif',Georgia,serif;--mono:'Geist Mono',monospace;--sans:'Geist',system-ui,sans-serif;--r:8px;--rl:12px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;-webkit-font-smoothing:antialiased}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);min-height:100vh}
+button{cursor:pointer;font-family:var(--sans);font-size:13px}
+input,select,textarea{font-family:var(--sans);font-size:13px;color:var(--ink)}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
+
+.app{display:grid;grid-template-columns:210px 1fr;min-height:100vh}
+.sidebar{background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.main{display:flex;flex-direction:column;min-width:0}
+
+.sb-head{padding:20px 16px 14px;border-bottom:1px solid var(--line)}
+.sb-brand{font-family:var(--serif);font-size:20px;font-style:italic;line-height:1.1}
+.sb-user{font-size:11px;color:var(--ink3);margin-top:5px;font-family:var(--mono)}
+.sb-nav{padding:8px 0;flex:1}
+.nav-lbl{font-size:10px;color:var(--ink3);font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:10px 16px 3px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:13px;color:var(--ink2);cursor:pointer;border-left:2px solid transparent;transition:all .12s;user-select:none}
+.nav-item:hover{background:var(--surface);color:var(--ink)}
+.nav-item.active{background:var(--blue-bg);color:var(--blue);border-left-color:var(--blue);font-weight:500}
+.nav-badge{margin-left:auto;background:var(--blue);color:#fff;font-size:10px;padding:1px 6px;border-radius:20px;font-family:var(--mono)}
+.rem-badge{margin-left:auto;background:var(--amber);color:#fff;font-size:10px;padding:1px 6px;border-radius:20px;font-family:var(--mono)}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--line);font-size:11px;color:var(--ink3);font-family:var(--mono)}
+.dot{display:inline-block;width:6px;height:6px;background:#10b981;border-radius:50%;margin-right:5px;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.topbar{background:#fff;border-bottom:1px solid var(--line);padding:0 26px;height:52px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10;flex-shrink:0}
+.topbar-title{font-size:15px;font-weight:500;flex:1}
+.topbar-sub{font-size:11px;color:var(--ink3);font-family:var(--mono)}
+
+.content{padding:22px 26px;flex:1}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.fade-in{animation:fi .18s ease forwards}
+
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:var(--r);font-size:13px;font-weight:500;border:1px solid var(--line2);background:#fff;color:var(--ink);transition:all .12s}
+.btn:hover{background:var(--surface)}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-primary:hover{background:#1647c7;border-color:#1647c7}
+.btn-sm{padding:4px 10px;font-size:12px}
+.btn-ghost{border:none;background:transparent;padding:4px 8px;color:var(--ink3);font-size:12px}
+.btn-ghost:hover{background:var(--surface);color:var(--ink2)}
+
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:20px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:var(--rl);padding:15px 17px}
+.stat-lbl{font-size:10px;color:var(--ink3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.stat-val{font-size:25px;font-weight:500;font-family:var(--mono);line-height:1}
+.stat-sub{font-size:11px;color:var(--ink3);margin-top:4px}
+.stat-sub.up{color:var(--green)}
+
+.rem-bar{background:var(--amber-bg);border:1px solid #fde68a;border-radius:var(--rl);padding:12px 15px;margin-bottom:16px}
+.rem-title{font-size:11px;font-weight:500;color:var(--amber);margin-bottom:8px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em}
+.rem-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(146,64,14,.1);font-size:13px}
+.rem-item:last-child{border:none;padding-bottom:0}
+
+.filter-bar{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.search-wrap{position:relative;flex:1;min-width:180px}
+.search-wrap svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink3);pointer-events:none}
+.s-input{width:100%;background:#fff;border:1px solid var(--line2);border-radius:var(--r);padding:7px 11px 7px 31px;font-size:13px;outline:none}
+.s-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.1)}
+.f-select{background:#fff;border:1px solid var(--line2);border-radius:var(--r);padding:7px 9px;font-size:12px;color:var(--ink2);outline:none;cursor:pointer;font-family:var(--mono)}
+.f-select:focus{border-color:var(--blue)}
+.res-count{font-size:11px;color:var(--ink3);font-family:var(--mono);margin-left:auto}
+
+.city-pills{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:16px}
+.cpill{padding:4px 12px;border-radius:20px;font-size:11px;border:1px solid var(--line2);background:#fff;color:var(--ink2);cursor:pointer;font-family:var(--mono);transition:all .12s}
+.cpill:hover{border-color:var(--line2);background:var(--surface)}
+.cpill.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.cpill.all.on{background:var(--ink);border-color:var(--ink)}
+
+.job-list{display:flex;flex-direction:column;gap:7px}
+.jcard{background:#fff;border:1px solid var(--line);border-radius:var(--rl);padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:11px;align-items:start;transition:border-color .12s}
+.jcard:hover{border-color:var(--line2)}
+.jcard.high{border-left:3px solid #10b981}
+.jcard.mid{border-left:3px solid #f59e0b}
+.jcard.done{opacity:.65}
+.jtitle{font-size:14px;font-weight:500;margin-bottom:3px}
+.jco{font-size:13px;color:var(--blue);font-weight:500;margin-bottom:7px}
+.jmeta{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.tag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:4px;font-family:var(--mono)}
+.t-city{background:var(--blue-bg);color:#1e40af}
+.t-src{background:var(--surface);color:var(--ink2)}
+.t-new{background:var(--green-bg);color:var(--green);font-weight:500}
+.t-date{color:var(--ink3)}
+.jdesc{font-size:12px;color:var(--ink3);margin-top:7px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.jright{display:flex;flex-direction:column;align-items:flex-end;gap:7px;flex-shrink:0}
+.score{font-family:var(--mono);font-size:22px;font-weight:500;line-height:1}
+.score.h{color:#10b981}.score.m{color:#f59e0b}.score.l{color:var(--ink3)}
+.score-lbl{font-size:10px;color:var(--ink3);font-family:var(--mono);text-align:center}
+.jacts{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+
+.sbadge{font-size:11px;padding:2px 8px;border-radius:4px;font-family:var(--mono);font-weight:500}
+.s-new{background:var(--surface);color:var(--ink3)}
+.s-applied{background:var(--blue-bg);color:#1e40af}
+.s-screening{background:#f5f3ff;color:#5b21b6}
+.s-interview{background:var(--green-bg);color:var(--green)}
+.s-offer{background:#ecfdf5;color:#065f46;font-weight:700}
+.s-rejected{background:var(--red-bg);color:var(--red)}
+.s-noresponse{background:var(--surface);color:var(--ink3)}
+
+.twrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--rl);background:#fff}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{padding:9px 13px;text-align:left;font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);border-bottom:1px solid var(--line);white-space:nowrap;background:var(--surface)}
+tbody td{padding:10px 13px;border-bottom:1px solid var(--line);color:var(--ink2);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--surface)}
+.td-t{color:var(--ink);font-weight:500;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.td-c{color:var(--blue);font-weight:500;white-space:nowrap}
+
+.empty{text-align:center;padding:56px 20px;color:var(--ink3)}
+.empty-icon{font-size:28px;margin-bottom:10px;opacity:.4}
+.empty-t{font-size:15px;font-weight:500;color:var(--ink2);margin-bottom:5px}
+.empty-s{font-size:13px}
+
+.modal-bg{min-height:400px;background:rgba(0,0,0,.32);display:flex;align-items:center;justify-content:center;border-radius:var(--rl);margin-top:14px}
+.modal{background:#fff;border-radius:var(--rl);padding:22px;width:100%;max-width:460px;border:1px solid var(--line2)}
+.modal-t{font-size:15px;font-weight:500;margin-bottom:14px}
+.fr{margin-bottom:12px}
+.fl{display:block;font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:4px}
+.fi{width:100%;border:1px solid var(--line2);border-radius:var(--r);padding:7px 10px;outline:none;font-size:13px}
+.fi:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.1)}
+textarea.fi{resize:vertical;min-height:66px}
+.fa{display:flex;gap:7px;margin-top:14px}
+
+.sc{background:#fff;border:1px solid var(--line);border-radius:var(--rl);padding:20px;margin-bottom:14px}
+.sc-t{font-size:13px;font-weight:500;margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+.srow{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.srow:last-child{border:none;padding-bottom:0}
+.sk{color:var(--ink2)}.sv{color:var(--ink3);font-family:var(--mono);font-size:12px}
+code{background:var(--surface);padding:1px 5px;border-radius:3px;font-family:var(--mono);font-size:12px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sb-head">
+      <div class="sb-brand">Job<br/>Hunter</div>
+      <div class="sb-user">sunil.kumar · data analyst</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="nav-lbl">Discover</div>
+      <div class="nav-item active" id="nav-feed" onclick="go('feed')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 14 14"><rect x="1" y="1" width="5" height="5" rx="1"/><rect x="8" y="1" width="5" height="5" rx="1"/><rect x="1" y="8" width="5" height="5" rx="1"/><rect x="8" y="8" width="5" height="5" rx="1"/></svg>
+        Job feed
+        <span class="nav-badge" id="nb" style="display:none">0</span>
+      </div>
+      <div class="nav-lbl">Track</div>
+      <div class="nav-item" id="nav-tracker" onclick="go('tracker')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 14 14"><rect x="1.5" y="1.5" width="11" height="11" rx="1.5"/><line x1="4" y1="5" x2="10" y2="5"/><line x1="4" y1="7.5" x2="10" y2="7.5"/><line x1="4" y1="10" x2="7" y2="10"/></svg>
+        Applications
+        <span class="rem-badge" id="rb" style="display:none">0</span>
+      </div>
+      <div class="nav-lbl">Config</div>
+      <div class="nav-item" id="nav-settings" onclick="go('settings')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 14 14"><circle cx="7" cy="7" r="2"/><path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M2.4 2.4l1 1M10.6 10.6l1 1M10.6 2.4l1-1M2.4 10.6l1-1"/></svg>
+        Settings
+      </div>
+    </nav>
+    <div class="sb-foot">
+      <div id="sb-status"><span class="dot"></span>ready</div>
+      <div id="sb-time" style="margin-top:3px"></div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="ptitle">Job feed</div>
+      <div class="topbar-sub" id="psub"></div>
+      <button class="btn btn-sm" id="rfbtn" onclick="load(true)">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 12 12"><path d="M10 2A5 5 0 1 0 11 6"/><polyline points="11,1 11,4 8,4"/></svg>
+        Refresh
+      </button>
+    </div>
+    <div class="content fade-in" id="ct"></div>
+  </div>
+</div>
+
+<script>
+const CITIES = ['Bangalore','Pune','Hyderabad','Chennai','Mumbai'];
+const STATUSES = ['new','applied','screening','interview','offer','rejected','no response'];
+let JOBS=[], TRACKER={}, REMINDERS=[], META={}, VIEW='feed';
+let F = {q:'',city:'all',tier:'all',status:'all'};
+
+function saveTr(){ localStorage.setItem('jh_tr', JSON.stringify(TRACKER)); }
+function loadTr(){ try{ TRACKER=JSON.parse(localStorage.getItem('jh_tr')||'{}'); }catch{ TRACKER={}; } }
+
+function merge(jobs){
+  return jobs.map(j=>{ const s=TRACKER[j.id]; return s?{...j,...s}:j; });
+}
+
+async function load(force=false){
+  document.getElementById('sb-status').innerHTML='<span class="dot" style="background:#f59e0b"></span>loading...';
+  try{
+    const r=await fetch('docs/jobs.json'+(force?'?t='+Date.now():''));
+    if(!r.ok) throw new Error();
+    const d=await r.json();
+    META=d; REMINDERS=d.reminders||[]; JOBS=merge(d.jobs||[]);
+    const nw=JOBS.filter(j=>!TRACKER[j.id]&&j.status==='new').length;
+    setBadges(nw, REMINDERS.length);
+    document.getElementById('sb-status').innerHTML='<span class="dot"></span>live';
+    document.getElementById('sb-time').textContent=d.generated_at?'Updated '+d.generated_at.slice(11):'';
+    document.getElementById('psub').textContent=d.generated_at||'';
+  }catch{
+    JOBS=demo(); REMINDERS=[];
+    setBadges(JOBS.length,0);
+    document.getElementById('sb-status').innerHTML='<span class="dot" style="background:#f59e0b"></span>demo mode';
+    document.getElementById('sb-time').textContent='Run fetch_jobs.py for live data';
+  }
+  render();
+}
+
+function setBadges(n,r){
+  const nb=document.getElementById('nb');
+  nb.textContent=n; nb.style.display=n>0?'':'none';
+  const rb=document.getElementById('rb');
+  rb.textContent=r; rb.style.display=r>0?'':'none';
+}
+
+function go(v){
+  VIEW=v;
+  document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
+  document.getElementById('nav-'+v)?.classList.add('active');
+  document.getElementById('ptitle').textContent={feed:'Job feed',tracker:'My applications',settings:'Settings'}[v]||v;
+  document.getElementById('rfbtn').style.display=v==='feed'?'':'none';
+  render();
+}
+
+function render(){
+  const el=document.getElementById('ct');
+  el.className='content'; void el.offsetWidth; el.className='content fade-in';
+  if(VIEW==='feed')    el.innerHTML=vFeed();
+  if(VIEW==='tracker') el.innerHTML=vTracker();
+  if(VIEW==='settings')el.innerHTML=vSettings();
+}
+
+function filtered(){
+  return JOBS.filter(j=>{
+    const tr=TRACKER[j.id]||{};
+    const st=tr.status||j.status;
+    const q=F.q.toLowerCase();
+    if(q&&!(j.title+j.company+j.description).toLowerCase().includes(q)) return false;
+    if(F.city!=='all'&&j.city!==F.city) return false;
+    if(F.tier!=='all'&&j.tier!==F.tier) return false;
+    if(F.status!=='all'&&st!==F.status) return false;
+    return true;
+  });
+}
+
+function vFeed(){
+  const fl=filtered();
+  const st={
+    total:JOBS.length,
+    high:JOBS.filter(j=>j.tier==='high').length,
+    applied:Object.values(TRACKER).filter(t=>t.status&&t.status!=='new').length,
+    nw:JOBS.filter(j=>!TRACKER[j.id]&&j.status==='new').length
+  };
+  return `
+  <div class="stat-row">
+    <div class="stat"><div class="stat-lbl">Total roles</div><div class="stat-val">${st.total}</div><div class="stat-sub">across 5 cities</div></div>
+    <div class="stat"><div class="stat-lbl">High match</div><div class="stat-val" style="color:#10b981">${st.high}</div><div class="stat-sub">score 78+</div></div>
+    <div class="stat"><div class="stat-lbl">Applied</div><div class="stat-val" style="color:var(--blue)">${st.applied}</div><div class="stat-sub">tracked</div></div>
+    <div class="stat"><div class="stat-lbl">New</div><div class="stat-val">${st.nw}</div><div class="stat-sub up">${st.nw>0?'↑ unseen':'all seen'}</div></div>
+  </div>
+  ${REMINDERS.length?`<div class="rem-bar"><div class="rem-title">Follow-up reminders (${REMINDERS.length})</div>${REMINDERS.map(r=>`<div class="rem-item"><span style="flex:1"><strong>${r.title}</strong> at ${r.company} — applied ${r.applied_at}</span><button class="btn btn-sm" onclick="openModal('${r.job_id}')">Update</button><button class="btn-ghost" onclick="dismissRem('${r.job_id}')">✕</button></div>`).join('')}</div>`:''}
+  <div class="filter-bar">
+    <div class="search-wrap"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 13 13"><circle cx="5.5" cy="5.5" r="4"/><line x1="9" y1="9" x2="12" y2="12"/></svg><input class="s-input" id="sq" placeholder="Search roles, companies…" value="${F.q}" oninput="F.q=this.value;render()"/></div>
+    <select class="f-select" onchange="F.tier=this.value;render()"><option value="all" ${F.tier==='all'?'selected':''}>All matches</option><option value="high" ${F.tier==='high'?'selected':''}>High match</option><option value="mid" ${F.tier==='mid'?'selected':''}>Medium</option></select>
+    <select class="f-select" onchange="F.status=this.value;render()"><option value="all" ${F.status==='all'?'selected':''}>All statuses</option><option value="new" ${F.status==='new'?'selected':''}>New only</option><option value="applied" ${F.status==='applied'?'selected':''}>Applied</option></select>
+    <span class="res-count">${fl.length} roles</span>
+  </div>
+  <div class="city-pills">
+    <div class="cpill all ${F.city==='all'?'on':''}" onclick="F.city='all';render()">All cities</div>
+    ${CITIES.map(c=>`<div class="cpill ${F.city===c?'on':''}" onclick="F.city='${c}';render()">${c}</div>`).join('')}
+  </div>
+  <div class="job-list">
+    ${fl.length===0?`<div class="empty"><div class="empty-icon">◎</div><div class="empty-t">No roles match</div><div class="empty-s">Try clearing filters</div></div>`:fl.map(j=>jcard(j)).join('')}
+  </div>`;
+}
+
+function jcard(j){
+  const tr=TRACKER[j.id]||{};
+  const st=tr.status||j.status||'new';
+  const isNew=st==='new'&&!TRACKER[j.id];
+  const sc=j.score||0;
+  const scCls=sc>=78?'h':sc>=58?'m':'l';
+  const sal=(j.salary_min&&j.salary_max)?`₹${Math.round(j.salary_min/100000)}–${Math.round(j.salary_max/100000)}L pa`:'';
+  return `<div class="jcard ${j.tier} ${st!=='new'?'done':''}">
+    <div>
+      <div class="jtitle">${j.title}${isNew?' <span class="tag t-new">NEW</span>':''}</div>
+      <div class="jco">${j.company}</div>
+      <div class="jmeta">
+        <span class="tag t-city">${j.city||j.location}</span>
+        <span class="tag t-src">${j.source}</span>
+        ${sal?`<span class="tag t-src">${sal}</span>`:''}
+        <span class="tag t-date">${fdate(j.posted)}</span>
+        <span class="sbadge s-${st.replace(' ','')}">${st}</span>
+      </div>
+      ${j.description?`<div class="jdesc">${j.description}</div>`:''}
+    </div>
+    <div class="jright">
+      <div><div class="score ${scCls}">${sc}</div><div class="score-lbl">fit score</div></div>
+      <div class="jacts">
+        <a href="${j.url}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">Apply ↗</a>
+        ${st==='new'?`<button class="btn btn-sm" onclick="markApplied('${j.id}')">✓ Applied</button>`:`<button class="btn btn-sm" onclick="openModal('${j.id}')">Edit</button>`}
+      </div>
+    </div>
+  </div>`;
+}
+
+function vTracker(){
+  const tracked=JOBS.filter(j=>TRACKER[j.id]?.status&&TRACKER[j.id].status!=='new')
+    .map(j=>({...j,...TRACKER[j.id]}))
+    .sort((a,b)=>(b.applied_at||'')>(a.applied_at||'')?1:-1);
+  const cnt={};
+  STATUSES.forEach(s=>cnt[s]=tracked.filter(j=>j.status===s).length);
+  const show=F.status==='all'?tracked:tracked.filter(j=>j.status===F.status);
+  return `
+  <div class="stat-row">
+    <div class="stat"><div class="stat-lbl">Total applied</div><div class="stat-val" style="color:var(--blue)">${tracked.length}</div><div class="stat-sub">logged</div></div>
+    <div class="stat"><div class="stat-lbl">Interviews</div><div class="stat-val" style="color:var(--green)">${cnt['interview']||0}</div><div class="stat-sub">${cnt['offer']||0} offer</div></div>
+    <div class="stat"><div class="stat-lbl">In pipeline</div><div class="stat-val">${(cnt['applied']||0)+(cnt['screening']||0)}</div><div class="stat-sub">awaiting</div></div>
+    <div class="stat"><div class="stat-lbl">Rejected</div><div class="stat-val" style="color:var(--red)">${cnt['rejected']||0}</div><div class="stat-sub">${cnt['no response']||0} no reply</div></div>
+  </div>
+  ${REMINDERS.length?`<div class="rem-bar" style="margin-bottom:16px"><div class="rem-title">⏰ ${REMINDERS.length} need follow-up</div>${REMINDERS.map(r=>`<div class="rem-item"><span style="flex:1"><strong>${r.title}</strong> at ${r.company} — ${r.applied_at}</span><button class="btn btn-sm" onclick="openModal('${r.job_id}')">Update</button></div>`).join('')}</div>`:''}
+  <div style="display:flex;gap:7px;align-items:center;margin-bottom:12px">
+    <select class="f-select" onchange="F.status=this.value;render()">
+      <option value="all">All statuses</option>
+      ${STATUSES.map(s=>`<option value="${s}" ${F.status===s?'selected':''}>${s} (${cnt[s]||0})</option>`).join('')}
+    </select>
+    <button class="btn btn-sm" onclick="exportCSV()">Export CSV</button>
+    <span class="res-count" style="margin-left:auto">${show.length} entries</span>
+  </div>
+  ${tracked.length===0?`<div class="empty"><div class="empty-icon">📋</div><div class="empty-t">No applications yet</div><div class="empty-s">Go to Job feed, click Apply then mark as applied</div></div>`:`
+  <div class="twrap"><table>
+    <thead><tr><th>Role</th><th>Company</th><th>City</th><th>Applied</th><th>Status</th><th>Referral</th><th>Notes</th><th></th></tr></thead>
+    <tbody>${show.map(j=>`<tr>
+      <td class="td-t">${j.title}</td>
+      <td class="td-c">${j.company}</td>
+      <td><span class="tag t-city">${j.city||j.location||'—'}</span></td>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--ink3)">${j.applied_at||'—'}</td>
+      <td><span class="sbadge s-${(j.status||'').replace(' ','')}">${j.status}</span></td>
+      <td style="font-size:12px">${j.referral?`<span style="color:var(--green)">✓ ${j.referrer||''}</span>`:'<span style="color:var(--ink3)">—</span>'}</td>
+      <td style="font-size:12px;color:var(--ink3);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${j.notes||'—'}</td>
+      <td><button class="btn btn-sm" onclick="openModal('${j.id}')">Edit</button></td>
+    </tr>`).join('')}</tbody>
+  </table></div>`}`;
+}
+
+function vSettings(){
+  const ak=localStorage.getItem('jh_ak')||'';
+  const ai=localStorage.getItem('jh_ai')||'';
+  const ak2=localStorage.getItem('jh_ak2')||'';
+  return `
+  <div class="sc"><div class="sc-t">Your data</div>
+    <div class="srow"><span class="sk">Jobs in feed</span><span class="sv">${JOBS.length}</span></div>
+    <div class="srow"><span class="sk">Applications tracked</span><span class="sv">${Object.keys(TRACKER).length}</span></div>
+    <div class="srow"><span class="sk">Last updated</span><span class="sv">${META.generated_at||'—'}</span></div>
+    <div class="srow"><span class="sk">Target cities</span><span class="sv">Bangalore · Pune · Hyderabad · Chennai · Mumbai</span></div>
+  </div>
+  <div class="sc"><div class="sc-t">API keys — saved in your browser only</div>
+    <div class="fr"><label class="fl">Adzuna App ID</label><input class="fi" id="s-ai" type="text" value="${ai}" placeholder="get free at developer.adzuna.com"/></div>
+    <div class="fr"><label class="fl">Adzuna App Key</label><input class="fi" id="s-ak" type="password" value="${ak}" placeholder="Adzuna app key"/></div>
+    <div class="fr"><label class="fl">Anthropic API key (optional — smarter scoring)</label><input class="fi" id="s-ak2" type="password" value="${ak2}" placeholder="sk-ant-…"/></div>
+    <button class="btn btn-primary" onclick="saveSettings()">Save keys</button>
+  </div>
+  <div class="sc"><div class="sc-t">How to update the job feed</div>
+    <div style="font-size:13px;color:var(--ink2);line-height:1.9">
+      1. Run <code>python fetch_jobs.py</code> locally anytime<br/>
+      2. Commit updated <code>docs/jobs.json</code> to GitHub<br/>
+      3. GitHub Actions runs it automatically 3× daily<br/>
+      4. Refresh this page to see new jobs
+    </div>
+  </div>
+  <div class="sc"><div class="sc-t">Data management</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" onclick="exportCSV()">Export tracker as CSV</button>
+      <button class="btn" style="color:var(--red)" onclick="if(confirm('Clear all tracker data?')){TRACKER={};saveTr();render()}">Clear tracker</button>
+    </div>
+  </div>`;
+}
+
+function markApplied(id){
+  TRACKER[id]={...(TRACKER[id]||{}),status:'applied',applied_at:td()};
+  saveTr(); render();
+}
+
+function dismissRem(id){
+  REMINDERS=REMINDERS.filter(r=>r.job_id!==id); render();
+}
+
+function openModal(id){
+  const j=JOBS.find(j=>j.id===id)||{};
+  const t=TRACKER[id]||{};
+  const m=document.createElement('div');
+  m.className='modal-bg'; m.id='modal';
+  m.innerHTML=`<div class="modal">
+    <div class="modal-t">Update application</div>
+    <div style="font-size:13px;color:var(--blue);font-weight:500;margin-bottom:13px">${j.title||''} · ${j.company||''}</div>
+    <div class="fr"><label class="fl">Status</label>
+      <select class="fi" id="m-st">${STATUSES.map(s=>`<option value="${s}" ${(t.status||'new')===s?'selected':''}>${s}</option>`).join('')}</select>
+    </div>
+    <div class="fr"><label class="fl">Date applied</label><input class="fi" id="m-dt" type="date" value="${t.applied_at||td()}"/></div>
+    <div class="fr"><label class="fl">Referral</label>
+      <select class="fi" id="m-ref"><option value="" ${!t.referral?'selected':''}>No referral</option><option value="yes" ${t.referral?'selected':''}>Yes — referred</option></select>
+    </div>
+    <div class="fr"><label class="fl">Referrer name</label><input class="fi" id="m-rfr" type="text" value="${t.referrer||''}" placeholder="Contact name"/></div>
+    <div class="fr"><label class="fl">Notes</label><textarea class="fi" id="m-nt">${t.notes||''}</textarea></div>
+    <div class="fa">
+      <button class="btn btn-primary" onclick="saveModal('${id}')">Save</button>
+      <button class="btn" onclick="document.getElementById('modal').remove()">Cancel</button>
+      <button class="btn" style="margin-left:auto;color:var(--red)" onclick="delFromTr('${id}')">Remove</button>
+    </div>
+  </div>`;
+  document.getElementById('ct').appendChild(m);
+}
+
+function saveModal(id){
+  TRACKER[id]={...(TRACKER[id]||{}),
+    status:    document.getElementById('m-st').value,
+    applied_at:document.getElementById('m-dt').value,
+    referral:  document.getElementById('m-ref').value==='yes',
+    referrer:  document.getElementById('m-rfr').value,
+    notes:     document.getElementById('m-nt').value,
+  };
+  saveTr(); document.getElementById('modal')?.remove(); render();
+}
+
+function delFromTr(id){
+  delete TRACKER[id]; saveTr();
+  document.getElementById('modal')?.remove(); render();
+}
+
+function saveSettings(){
+  localStorage.setItem('jh_ai',  document.getElementById('s-ai').value);
+  localStorage.setItem('jh_ak',  document.getElementById('s-ak').value);
+  localStorage.setItem('jh_ak2', document.getElementById('s-ak2').value);
+  alert('Saved. Add these same keys as GitHub Secrets (see README).');
+}
+
+function exportCSV(){
+  const rows=[['Title','Company','City','Source','Applied','Status','Referral','Referrer','Notes','URL']];
+  JOBS.filter(j=>TRACKER[j.id]).forEach(j=>{
+    const t=TRACKER[j.id]||{};
+    rows.push([j.title,j.company,j.city||j.location,j.source,t.applied_at||'',t.status||'',t.referral?'Yes':'No',t.referrer||'',t.notes||'',j.url]);
+  });
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download=`jobhunter_${td()}.csv`; a.click();
+}
+
+function fdate(d){
+  if(!d) return '';
+  const diff=Math.floor((Date.now()-new Date(d))/86400000);
+  if(diff===0) return 'today';
+  if(diff===1) return 'yesterday';
+  if(diff<7)   return diff+'d ago';
+  return d;
+}
+
+function td(){ return new Date().toISOString().slice(0,10); }
+
+function demo(){
+  const t=td();
+  return [
+    {id:'d1',title:'Data Analyst — Product',company:'Flipkart',city:'Bangalore',location:'Bangalore',source:'Adzuna',score:88,tier:'high',posted:t,url:'https://careers.flipkart.com',description:'SQL, Python, Power BI. Analyse product metrics, build dashboards, work with product teams. 0–3 years.',status:'new',applied_at:'',notes:'',referral:'',referrer:'',salary_min:600000,salary_max:900000,fetched_at:t},
+    {id:'d2',title:'Business Analyst',company:'Razorpay',city:'Bangalore',location:'Bangalore',source:'Adzuna',score:85,tier:'high',posted:t,url:'https://razorpay.com/jobs',description:'Payments analytics. SQL required, Python preferred. Cross-functional collaboration. Entry level.',status:'new',applied_at:'',notes:'',referral:'',referrer:'',salary_min:'',salary_max:'',fetched_at:t},
+    {id:'d3',title:'Junior Data Analyst',company:'S&P Global',city:'Hyderabad',location:'Hyderabad',source:'Adzuna',score:83,tier:'high',posted:t,url:'https://careers.spglobal.com',description:'Financial data analysis. SQL, Excel, Power BI. 0–2 years. Strong analytical skills required.',status:'new',applied_at:'',notes:'',referral:'',referrer:'',salary_min:'',salary_max:'',fetched_at:t},
+    {id:'d4',title:'BI Analyst',company:'PhonePe',city:'Bangalore',location:'Bangalore',source:'Adzuna',score:80,tier:'high',posted:t,url:'https://phonepe.com/careers',description:'Business intelligence. Power BI, SQL, Python. KPI tracking and dashboards for fintech products.',status:'new',applied_at:'',notes:'',referral:'',referrer:'',salary_min:'',salary_max:'',fetched_at:t},
+    {id:'d5',title:'MIS Executive',company:'Meesho',city:'Bangalore',location:'Bangalore',source:'Adzuna',score:74,tier:'mid',posted:t,url:'https://meesho.io/jobs',description:'MIS reporting, Excel, SQL. Automate reports and support operations with data insights.',status:'new',applied_at:'',notes:'',referral:'',referrer:'',salary_min:'',salary_max:'',fetched_at:t},
+    {id:'d6',title:'Data Analyst',company:'Genpact',city:'Pune',location:'Pune',source:'Adzuna',score:79,tier:'mid',posted:t,url:'https://genpact.com/careers',description:'Analytics consulting. SQL, Python, Excel. Global clients. 0–3 years experience preferred.',status:'new',applied_at:'',notes:'',referral:'',referrer:'',salary_min:'',salary_max:'',fetched_at:t},
+    {id:'d7',title:'Associate Analyst',company:'Deloitte',city:'Hyderabad',location:'Hyderabad',source:'Adzuna',score:76,tier:'mid',posted:t,url:'https://careers.deloitte.com/in',description:'Data analytics consulting. Freshers welcome. Python, SQL, Excel skills needed.',status:'new',applied_at:'',notes:'',referral:'',referrer:'',salary_min:'',salary_max:'',fetched_at:t},
+    {id:'d8',title:'Reporting Analyst',company:'NTT Data',city:'Chennai',location:'Chennai',source:'Adzuna',score:72,tier:'mid',posted:t,url:'https://nttdata.com/global/en/careers',description:'Power BI, SQL. Build and maintain reporting for enterprise clients.',status:'new',applied_at:'',notes:'',referral:'',referrer:'',salary_min:'',salary_max:'',fetched_at:t},
+    {id:'d9',title:'Data Analyst — Growth',company:'CRED',city:'Bangalore',location:'Bangalore',source:'Adzuna',score:82,tier:'high',posted:t,url:'https://careers.cred.club',description:'Growth analytics. Python, SQL, A/B testing. 1–3 years. Fintech environment.',status:'new',applied_at:'',notes:'',referral:'',referrer:'',salary_min:'',salary_max:'',fetched_at:t},
+    {id:'d10',title:'Analytics Analyst',company:'Groww',city:'Bangalore',location:'Bangalore',source:'Adzuna',score:80,tier:'high',posted:t,url:'https://careers.groww.in',description:'Fintech analytics. SQL, Python. Product and business metrics.',status:'new',applied_at:'',notes:'',referral:'',referrer:'',salary_min:'',salary_max:'',fetched_at:t},
+    {id:'d11',title:'Business Analyst',company:'Mu Sigma',city:'Bangalore',location:'Bangalore',source:'Adzuna',score:77,tier:'mid',posted:t,url:'https://mu-sigma.com/careers',description:'Decision sciences. SQL, Excel, Python. Global clients.',status:'new',applied_at:'',notes:'',referral:'',referrer:'',salary_min:'',salary_max:'',fetched_at:t},
+    {id:'d12',title:'Data Analyst',company:'EY',city:'Mumbai',location:'Mumbai',source:'Adzuna',score:75,tier:'mid',posted:t,url:'https://careers.ey.com',description:'Data and analytics consulting. SQL, Power BI, Python. 0–2 years.',status:'new',applied_at:'',notes:'',referral:'',referrer:'',salary_min:'',salary_max:'',fetched_at:t},
+  ];
+}
+
+loadTr();
+load();
+</script>
+</body>
+</html>
